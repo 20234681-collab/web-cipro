@@ -1,0 +1,1932 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CIPRO - Círculo de Gestión de Proyectos</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <style>
+    /* Tipografía y Base */
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #020202;
+      color: #ffffff;
+      overflow-x: hidden;
+    }
+
+    /* Colores corporativos CIPRO */
+    .bg-void-black { background-color: #020202; }
+    .text-electric-orange { color: #FF5500; }
+    .bg-electric-orange { background-color: #FF5500; }
+    .border-electric-orange { border-color: #FF5500; }
+
+    /* Glows y Efectos visuales */
+    .glow-orange-btn {
+      box-shadow: 0 0 30px rgba(255, 85, 0, 0.5);
+      transition: box-shadow 0.3s ease, transform 0.15s ease;
+    }
+    .glow-orange-btn:hover {
+      box-shadow: 0 0 65px rgba(255, 85, 0, 0.9), 0 0 20px rgba(255, 85, 0, 0.6);
+      transform: scale(1.04);
+    }
+    .glow-orange-btn:active {
+      box-shadow: 0 0 90px rgba(255, 85, 0, 1);
+      transform: scale(0.97);
+    }
+    .btn-glow-wrapper {
+      position: relative;
+      display: inline-block;
+    }
+    .btn-glow-wrapper::before {
+      content: '';
+      position: absolute;
+      inset: -6px;
+      border-radius: 9999px;
+      background: radial-gradient(ellipse, rgba(255,85,0,0.4) 0%, transparent 70%);
+      opacity: 0;
+      transition: opacity 0.3s ease, filter 0.3s ease;
+      filter: blur(12px);
+      z-index: -1;
+    }
+    .btn-glow-wrapper:hover::before {
+      opacity: 1;
+      filter: blur(18px);
+    }
+
+    /* Modales y Overlays */
+    .modal-backdrop {
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.28s ease, visibility 0.28s ease;
+    }
+    .modal-backdrop.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    .modal-card {
+      transform: scale(0.94) translateY(12px);
+      opacity: 0;
+      transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.28s ease;
+    }
+    .modal-backdrop.active .modal-card {
+      transform: scale(1) translateY(0);
+      opacity: 1;
+    }
+
+    /* Scrollbar personalizada */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #080b11;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.18);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #FF5500;
+    }
+
+    /* Carrusel integrado en tarjetas */
+    .carousel-arrow {
+      opacity: 0;
+      transition: opacity 0.2s ease, transform 0.2s ease, background-color 0.2s ease;
+    }
+    .project-card:hover .carousel-arrow {
+      opacity: 1;
+    }
+    .carousel-arrow:hover {
+      transform: scale(1.12);
+    }
+
+    /* Tabs de Capacitaciones */
+    .tab-btn.active {
+      background-color: #FF5500;
+      color: #ffffff;
+      border-color: #FF5500;
+      box-shadow: 0 0 20px rgba(255, 85, 0, 0.35);
+    }
+
+    /* Toast Notification */
+    #toastNotification {
+      transform: translateY(100px);
+      opacity: 0;
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease;
+    }
+    #toastNotification.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body class="bg-void-black text-white selection:bg-[#FF5500] selection:text-white relative min-h-screen">
+
+  <!-- ==================== BARRA SUPERIOR / STATIC HEADER ==================== -->
+  <header class="fixed top-0 left-0 right-0 z-50 px-4 md:px-8 py-3.5 flex items-center justify-between bg-void-black/85 backdrop-blur-xl border-b border-white/10 transition-all">
+    <!-- Logotipo CIPRO -->
+    <a href="#inicio" class="flex items-center gap-2 group">
+      <div class="w-8 h-8 rounded-lg bg-electric-orange/20 border border-electric-orange/40 flex items-center justify-center font-black text-electric-orange group-hover:scale-105 transition-transform">
+        C
+      </div>
+      <span class="text-xl md:text-2xl font-black tracking-tighter text-white">CIPRO<span class="text-electric-orange">.</span></span>
+    </a>
+
+    <!-- 2. NAVEGACIÓN SUPERIOR ESTÁTICA -->
+    <nav class="hidden md:flex items-center gap-7">
+      <a href="#pmo-knowledge" class="text-sm font-medium text-white/70 hover:text-electric-orange transition-colors">
+        PMO Knowledge
+      </a>
+      <a href="#proyectos" class="text-sm font-medium text-white/70 hover:text-electric-orange transition-colors">
+        Proyectos
+      </a>
+      <a href="#capacitaciones" class="text-sm font-medium text-white/70 hover:text-electric-orange transition-colors">
+        Capacitaciones
+      </a>
+      <a href="#nosotros" class="text-sm font-medium text-white/70 hover:text-electric-orange transition-colors">
+        Comunidad
+      </a>
+    </nav>
+
+    <!-- 1. CONTROL DE ROLES & PERMISOS EN NAVBAR (GENERAL vs. MIEMBRO) -->
+    <div class="flex items-center gap-3">
+      <!-- Selector de Rol Interactivo para Demo y Pruebas -->
+      <div class="flex items-center bg-[#10141f] border border-white/10 rounded-full p-1 text-xs">
+        <button id="btnRoleGeneral" onclick="switchUserRole(false)" class="px-3 py-1.5 rounded-full font-medium transition-all text-white bg-white/10" title="Modo Solo Lectura (Público General)">
+          👁️ General
+        </button>
+        <button id="btnRoleMember" onclick="switchUserRole(true)" class="px-3 py-1.5 rounded-full font-medium transition-all text-gray-400 hover:text-white" title="Modo Edición / Miembro Directiva">
+          👑 Miembro (Admin)
+        </button>
+      </div>
+
+      <!-- Botón Login Miembros / Estado de Sesión -->
+      <button onclick="openLoginModal()" id="btnNavLogin" class="hidden lg:flex items-center gap-2 px-4 py-2 text-xs font-semibold bg-white/10 hover:bg-white/20 text-white rounded-full transition-all border border-white/5 cursor-pointer">
+        <span id="navLoginStatusDot" class="w-2 h-2 rounded-full bg-gray-400"></span>
+        <span id="navLoginText">Login Miembros</span>
+      </button>
+
+      <!-- Botón móvil para menú -->
+      <button onclick="toggleMobileNav()" class="md:hidden p-2 text-gray-400 hover:text-white">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Menú móvil desplegable -->
+  <div id="mobileNavMenu" class="fixed top-[61px] left-0 right-0 bg-void-black/95 backdrop-blur-xl border-b border-white/10 p-6 flex flex-col gap-4 z-40 hidden md:hidden">
+    <a href="#pmo-knowledge" onclick="toggleMobileNav()" class="text-base font-medium text-white hover:text-electric-orange">PMO Knowledge</a>
+    <a href="#proyectos" onclick="toggleMobileNav()" class="text-base font-medium text-white hover:text-electric-orange">Proyectos</a>
+    <a href="#capacitaciones" onclick="toggleMobileNav()" class="text-base font-medium text-white hover:text-electric-orange">Capacitaciones</a>
+    <a href="#nosotros" onclick="toggleMobileNav()" class="text-base font-medium text-white hover:text-electric-orange">Comunidad</a>
+    <div class="pt-3 border-t border-white/10 flex flex-col gap-2">
+      <div class="text-xs text-gray-400 mb-1">Simulación de Rol:</div>
+      <div class="flex gap-2">
+        <button onclick="switchUserRole(false); toggleMobileNav();" class="flex-1 py-2 text-xs rounded-xl bg-white/10 text-white font-medium">Modo General</button>
+        <button onclick="switchUserRole(true); toggleMobileNav();" class="flex-1 py-2 text-xs rounded-xl bg-electric-orange text-white font-bold">Modo Miembro</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Banner Flotante Informativo de Rol Actual -->
+  <div id="roleAlertBanner" class="fixed top-[66px] left-1/2 -translate-x-1/2 z-40 px-4 py-1.5 rounded-full text-xs font-semibold backdrop-blur-lg border transition-all duration-300 hidden items-center gap-2">
+    <span id="roleBannerIcon">👁️</span>
+    <span id="roleBannerText">Modo Visualización General: Permisos de lectura y descarga de PDFs.</span>
+  </div>
+
+  <!-- ==================== HERO SECTION ==================== -->
+  <section id="inicio" class="relative h-screen w-full overflow-hidden bg-void-black flex flex-col items-center justify-between">
+    <!-- Canvas de secuencia 3D de CIPRO (141 fotogramas) -->
+    <canvas id="heroCanvas" class="absolute inset-0 z-0 h-full w-full object-cover pointer-events-none"></canvas>
+
+    <!-- Overlay y Call to Action -->
+    <div class="relative z-10 w-full flex-1 flex flex-col items-center justify-end pb-20 md:pb-28 text-center px-4">
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/10 text-xs font-semibold text-electric-orange uppercase tracking-widest mb-4 bg-white/[0.03]">
+        ✦ Círculo de Gestión de Proyectos
+      </div>
+      <h1 class="text-4xl md:text-7xl font-extrabold tracking-tight bg-gradient-to-br from-white via-white/90 to-white/50 bg-clip-text text-transparent pb-3 drop-shadow-2xl max-w-4xl">
+        Consultoría Junior con Mentalidad de Élite
+      </h1>
+      <p class="text-gray-400 max-w-2xl mx-auto text-sm md:text-base mb-8">
+        Estructuramos el talento universitario hacia estándares internacionales de Project Management, investigación aplicada y metodologías ágiles.
+      </p>
+
+      <div class="flex flex-wrap items-center justify-center gap-4">
+        <div class="btn-glow-wrapper">
+          <button onclick="openPostulacionModal()" class="px-8 py-3.5 rounded-full bg-electric-orange text-white font-bold text-sm md:text-base tracking-wider uppercase glow-orange-btn cursor-pointer">
+            Únete a CIPRO
+          </button>
+        </div>
+        <a href="#proyectos" class="px-7 py-3.5 rounded-full bg-white/5 hover:bg-white/10 text-white font-semibold text-sm border border-white/10 transition-all flex items-center gap-2">
+          <span>Explorar Proyectos</span>
+          <span>↓</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <div class="relative z-10 bg-void-black">
+
+    <!-- ==================== 3. SECCIÓN PMO KNOWLEDGE (6 BOTONES & MODAL ENFOCADO) ==================== -->
+    <section id="pmo-knowledge" class="py-24 md:py-32 bg-void-black relative overflow-hidden border-b border-white/5">
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-electric-orange/5 rounded-full blur-[160px] pointer-events-none"></div>
+
+      <div class="max-w-6xl mx-auto px-4 md:px-6 relative z-10">
+        <!-- Cabecera de Sección -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-6">
+          <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-electric-orange/30 text-[11px] font-bold text-electric-orange uppercase tracking-wider mb-3 bg-electric-orange/10">
+              PMO Framework &amp; Repositorio
+            </div>
+            <h2 class="text-3xl md:text-5xl font-black text-white tracking-tight">PMO Knowledge</h2>
+            <p class="text-gray-400 max-w-2xl text-sm md:text-base mt-2">
+              Haz clic en cualquiera de las 6 áreas técnicas para abrir el <strong>modal enfocado</strong> con guías, plantillas oficiales y documentación descargable.
+            </p>
+          </div>
+
+          <!-- Botón exclusivo para Miembros (Oculto por defecto para usuarios generales) -->
+          <div class="member-only hidden">
+            <button onclick="openUploadPDFModal('PMO Knowledge')" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-electric-orange/20 hover:bg-electric-orange text-electric-orange hover:text-white border border-electric-orange/40 text-xs font-bold transition-all shadow-[0_0_20px_rgba(255,85,0,0.25)]">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+              <span>Subir PDF / Nuevo Recurso</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Las 6 Tarjetas / Botones de PMO Knowledge -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+          <!-- 1. Biblioteca de recursos -->
+          <div onclick="openPMOModal('biblioteca')" class="group p-7 rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.04] to-transparent hover:border-electric-orange/50 hover:shadow-[0_0_40px_rgba(255,85,0,0.15)] transition-all duration-300 cursor-pointer flex flex-col justify-between">
+            <div>
+              <div class="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-electric-orange text-2xl mb-5 group-hover:scale-110 group-hover:bg-electric-orange/10 transition-all">
+                📚
+              </div>
+              <h3 class="text-xl font-bold text-white mb-2 group-hover:text-electric-orange transition-colors">Biblioteca de recursos</h3>
+              <p class="text-gray-400 text-xs leading-relaxed">
+                Repositorio maestro con más de 500 templates, project charters, actas de constitución y guías del PMBOK 7.
+              </p>
+            </div>
+            <div class="mt-6 pt-4 border-t border-white/5 flex items-center justify-between text-xs text-gray-400 group-hover:text-white">
+              <span class="text-electric-orange font-semibold">Explorar recursos</span>
+              <span class="group-hover:translate-x-1 transition-transform">→</span>
+            </div>
+          </div>
+
+          <!-- 2. Metodologías ágiles -->
+          <div onclick="openPMOModal('agiles')" class="group p-7 rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.04] to-transparent hover:border-electric-orange/50 hover:shadow-[0_0_40px_rgba(255,85,0,0.15)] transition-all duration-300 cursor-pointer flex flex-col justify-between">
+            <div>
+              <div class="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-electric-orange text-2xl mb-5 group-hover:scale-110 group-hover:bg-electric-orange/10 transition-all">
+                ⚡
+              </div>
+              <h3 class="text-xl font-bold text-white mb-2 group-hover:text-electric-orange transition-colors">Metodologías ágiles</h3>
+              <p class="text-gray-400 text-xs leading-relaxed">
+                Guías prácticas para Scrum, tableros Kanban, SAFe empresarial, gestión de sprints y retrospectivas efectivas.
+              </p>
+            </div>
+            <div class="mt-6 pt-4 border-t border-white/5 flex items-center justify-between text-xs text-gray-400 group-hover:text-white">
+              <span class="text-electric-orange font-semibold">Ver metodologías</span>
+              <span class="group-hover:translate-x-1 transition-transform">→</span>
+            </div>
+          </div>
+
+          <!-- 3. Gestión de riesgos -->
+          <div onclick="openPMOModal('riesgos')" class="group p-7 rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.04] to-transparent hover:border-electric-orange/50 hover:shadow-[0_0_40px_rgba(255,85,0,0.15)] transition-all duration-300 cursor-pointer flex flex-col justify-between">
+            <div>
+              <div class="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-electric-orange text-2xl mb-5 group-hover:scale-110 group-hover:bg-electric-orange/10 transition-all">
+                🛡️
+              </div>
+              <h3 class="text-xl font-bold text-white mb-2 group-hover:text-electric-orange transition-colors">Gestión de riesgos</h3>
+              <p class="text-gray-400 text-xs leading-relaxed">
+                Matrices de probabilidad e impacto, planes de respuesta ante contingencias y monitoreo preventivo continuo.
+              </p>
+            </div>
+            <div class="mt-6 pt-4 border-t border-white/5 flex items-center justify-between text-xs text-gray-400 group-hover:text-white">
+              <span class="text-electric-orange font-semibold">Consultar matrices</span>
+              <span class="group-hover:translate-x-1 transition-transform">→</span>
+            </div>
+          </div>
+
+          <!-- 4. KPIs y métricas -->
+          <div onclick="openPMOModal('kpis')" class="group p-7 rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.04] to-transparent hover:border-electric-orange/50 hover:shadow-[0_0_40px_rgba(255,85,0,0.15)] transition-all duration-300 cursor-pointer flex flex-col justify-between">
+            <div>
+              <div class="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-electric-orange text-2xl mb-5 group-hover:scale-110 group-hover:bg-electric-orange/10 transition-all">
+                📊
+              </div>
+              <h3 class="text-xl font-bold text-white mb-2 group-hover:text-electric-orange transition-colors">KPIs y métricas</h3>
+              <p class="text-gray-400 text-xs leading-relaxed">
+                Gestión del Valor Ganado (EVM), índices SPI y CPI, velocidad del equipo y tableros de control directivo.
+              </p>
+            </div>
+            <div class="mt-6 pt-4 border-t border-white/5 flex items-center justify-between text-xs text-gray-400 group-hover:text-white">
+              <span class="text-electric-orange font-semibold">Ver indicadores</span>
+              <span class="group-hover:translate-x-1 transition-transform">→</span>
+            </div>
+          </div>
+
+          <!-- 5. PMO setup -->
+          <div onclick="openPMOModal('pmo_setup')" class="group p-7 rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.04] to-transparent hover:border-electric-orange/50 hover:shadow-[0_0_40px_rgba(255,85,0,0.15)] transition-all duration-300 cursor-pointer flex flex-col justify-between">
+            <div>
+              <div class="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-electric-orange text-2xl mb-5 group-hover:scale-110 group-hover:bg-electric-orange/10 transition-all">
+                ⚙️
+              </div>
+              <h3 class="text-xl font-bold text-white mb-2 group-hover:text-electric-orange transition-colors">PMO setup</h3>
+              <p class="text-gray-400 text-xs leading-relaxed">
+                Modelos de madurez para oficinas de proyectos: soporte, control o dirección estratégica institucional.
+              </p>
+            </div>
+            <div class="mt-6 pt-4 border-t border-white/5 flex items-center justify-between text-xs text-gray-400 group-hover:text-white">
+              <span class="text-electric-orange font-semibold">Estructuración PMO</span>
+              <span class="group-hover:translate-x-1 transition-transform">→</span>
+            </div>
+          </div>
+
+          <!-- 6. Documentación -->
+          <div onclick="openPMOModal('documentacion')" class="group p-7 rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.04] to-transparent hover:border-electric-orange/50 hover:shadow-[0_0_40px_rgba(255,85,0,0.15)] transition-all duration-300 cursor-pointer flex flex-col justify-between">
+            <div>
+              <div class="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-electric-orange text-2xl mb-5 group-hover:scale-110 group-hover:bg-electric-orange/10 transition-all">
+                📑
+              </div>
+              <h3 class="text-xl font-bold text-white mb-2 group-hover:text-electric-orange transition-colors">Documentación</h3>
+              <p class="text-gray-400 text-xs leading-relaxed">
+                Formatos de actas de reunión, lecciones aprendidas, reportes de estatus semanal y actas de cierre formal.
+              </p>
+            </div>
+            <div class="mt-6 pt-4 border-t border-white/5 flex items-center justify-between text-xs text-gray-400 group-hover:text-white">
+              <span class="text-electric-orange font-semibold">Descargar formatos</span>
+              <span class="group-hover:translate-x-1 transition-transform">→</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 4. SECCIÓN PROYECTOS (GRID, CARRUSEL INTEGRADO & MODAL ADAPTATIVO) ==================== -->
+    <section id="proyectos" class="py-24 md:py-32 bg-void-black relative overflow-hidden border-b border-white/5">
+      <div class="max-w-6xl mx-auto px-4 md:px-6 relative z-10">
+        <!-- Encabezado de la sección -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-6">
+          <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-electric-orange/30 text-[11px] font-bold text-electric-orange uppercase tracking-wider mb-3 bg-electric-orange/10">
+              Casos de Éxito &amp; Consultoría
+            </div>
+            <h2 class="text-3xl md:text-5xl font-black text-white tracking-tight">Proyectos con Propósito</h2>
+            <p class="text-gray-400 max-w-2xl text-sm md:text-base mt-2">
+              Cada tarjeta cuenta con un <strong>carrusel de imágenes integrado</strong>. Al hacer clic en la tarjeta se abrirá el modal adaptativo con los bloques de <em>Causas, Soluciones y Anexos</em>.
+            </p>
+          </div>
+
+          <!-- Botón "Agregar nuevo proyecto" (Modo Miembro / Admin) -->
+          <div class="member-only hidden">
+            <button onclick="openAddProjectModal()" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-electric-orange text-white font-bold text-xs shadow-[0_0_25px_rgba(255,85,0,0.4)] hover:bg-[#ff6719] transition-all cursor-pointer">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+              <span>Agregar Nuevo Proyecto</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- CUADRÍCULA DE PROYECTOS (Grid de tarjetas con carrusel integrado) -->
+        <div id="projectsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <!-- Renderizado dinámico desde JavaScript (projectsData) -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 5. SECCIÓN CAPACITACIONES Y EVENTOS (TABS: TEMARIO, EXPOSITORES, MATERIAL) ==================== -->
+    <section id="capacitaciones" class="py-24 md:py-32 bg-void-black relative overflow-hidden border-b border-white/5">
+      <div class="max-w-6xl mx-auto px-4 md:px-6 relative z-10">
+        <!-- Cabecera -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-6">
+          <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-electric-orange/30 text-[11px] font-bold text-electric-orange uppercase tracking-wider mb-3 bg-electric-orange/10">
+              Formación &amp; Workshops
+            </div>
+            <h2 class="text-3xl md:text-5xl font-black text-white tracking-tight">Capacitaciones y Eventos</h2>
+            <p class="text-gray-400 max-w-2xl text-sm md:text-base mt-2">
+              Haz clic en cualquier evento para abrir el modal interactivo con pestañas: <strong>Temario</strong>, <strong>Expositores</strong> y <strong>Material de Descarga</strong>.
+            </p>
+          </div>
+
+          <!-- Botón Miembro: Crear Capacitación -->
+          <div class="member-only hidden">
+            <button onclick="openCreateEventModal()" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-electric-orange text-white font-bold text-xs shadow-[0_0_25px_rgba(255,85,0,0.4)] hover:bg-[#ff6719] transition-all">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+              <span>Crear Capacitación / Evento</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Cuadrícula de Eventos -->
+        <div id="eventsGrid" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <!-- Renderizado dinámico en JS (eventsData) -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== CONOCE CIPRO / COMUNIDAD ==================== -->
+    <section id="nosotros" class="py-20 md:py-28 bg-[#020202] relative overflow-hidden border-b border-white/5">
+      <div class="max-w-6xl mx-auto px-4 md:px-6">
+        <div class="text-center mb-14">
+          <h2 class="text-3xl md:text-5xl font-bold text-white mb-4 tracking-tight">Más que una comunidad.</h2>
+          <p class="text-gray-400 max-w-2xl mx-auto text-sm md:text-base">
+            Gestionamos el presente, proyectamos el futuro con rigor metodológico y visión estratégica.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="p-8 rounded-3xl border border-white/10 bg-white/[0.02] flex flex-col justify-between">
+            <div class="space-y-4">
+              <div class="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-electric-orange text-2xl">🎯</div>
+              <h3 class="text-xl font-bold text-white">¿Qué es CIPRO?</h3>
+              <p class="text-gray-400 text-xs leading-relaxed">
+                Organización técnica universitaria multidisciplinaria que estructura el talento en gestión de proyectos bajo estándares PMO, metodologías ágiles e investigación aplicada.
+              </p>
+            </div>
+            <div class="mt-6 flex flex-wrap gap-2">
+              <span class="text-[11px] px-2.5 py-1 rounded-full text-gray-300 bg-white/5 border border-white/10">#PMO</span>
+              <span class="text-[11px] px-2.5 py-1 rounded-full text-gray-300 bg-white/5 border border-white/10">#Scrum</span>
+              <span class="text-[11px] px-2.5 py-1 rounded-full text-gray-300 bg-white/5 border border-white/10">#EVM</span>
+            </div>
+          </div>
+
+          <div class="p-8 rounded-3xl border border-electric-orange/40 bg-electric-orange/[0.03] flex flex-col justify-between shadow-[0_0_30px_rgba(255,85,0,0.08)]">
+            <div class="space-y-4">
+              <div class="w-12 h-12 rounded-xl bg-electric-orange/20 border border-electric-orange/30 flex items-center justify-center text-electric-orange text-2xl">🧭</div>
+              <div class="text-[10px] uppercase font-bold tracking-wider px-2.5 py-1 rounded-full text-electric-orange bg-electric-orange/15 w-fit">Propósito</div>
+              <h3 class="text-xl font-bold text-white">Nuestro Propósito</h3>
+              <p class="text-gray-300 text-xs leading-relaxed">
+                Inspirar y potenciar el talento, comprometiéndose para trascender en comunidad mediante proyectos orientados a los Objetivos de Desarrollo Sostenible (ODS).
+              </p>
+            </div>
+            <div class="mt-6 text-xs text-electric-orange font-semibold">✓ Impacto tangible y valor real</div>
+          </div>
+
+          <div class="p-8 rounded-3xl border border-white/10 bg-white/[0.02] flex flex-col justify-between">
+            <div class="space-y-4">
+              <div class="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white text-2xl">📅</div>
+              <h3 class="text-xl font-bold text-white">Fundación 2015</h3>
+              <p class="text-gray-400 text-xs leading-relaxed">
+                Fundado el 16 de noviembre de 2015 como una iniciativa pionera para aprender y practicar project management de alto rendimiento.
+              </p>
+            </div>
+            <div class="mt-6 flex items-center justify-between text-xs text-gray-400">
+              <span>+10 años de trayectoria</span>
+              <span class="text-electric-orange font-semibold">CIPRO UNI</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Social Proof -->
+    <section class="py-14 bg-void-black border-b border-white/5">
+      <div class="max-w-5xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+        <div>
+          <span class="text-4xl md:text-6xl font-black text-white tracking-tighter">+10</span>
+          <span class="block text-xs text-gray-400 mt-2 uppercase tracking-widest font-semibold">Años de Historia</span>
+        </div>
+        <div>
+          <span class="text-4xl md:text-6xl font-black text-white tracking-tighter">+18</span>
+          <span class="block text-xs text-gray-400 mt-2 uppercase tracking-widest font-semibold">Proyectos Entregados</span>
+        </div>
+        <div>
+          <span class="text-4xl md:text-6xl font-black text-white tracking-tighter">+50</span>
+          <span class="block text-xs text-gray-400 mt-2 uppercase tracking-widest font-semibold">Miembros Activos</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-void-black text-white pt-16 pb-12 relative overflow-hidden">
+      <div class="max-w-6xl mx-auto px-6 relative z-10">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-10 pb-12 border-b border-white/5">
+          <div class="md:col-span-5 space-y-4">
+            <div class="text-2xl font-black tracking-tighter text-white">CIPRO<span class="text-electric-orange">.</span></div>
+            <p class="text-gray-400 text-xs max-w-sm leading-relaxed">
+              Círculo de Gestión de Proyectos. Formando la próxima generación de líderes en PMO, consultoría y metodologías ágiles.
+            </p>
+            <div class="text-xs text-gray-400">
+              Estado de permisos activo: <strong id="footerRoleText" class="text-white">Usuario General (Solo Lectura)</strong>
+            </div>
+          </div>
+
+          <div class="md:col-span-3">
+            <h4 class="text-white font-bold mb-4 uppercase tracking-widest text-xs">Secciones Rápidas</h4>
+            <ul class="space-y-2.5 text-xs text-gray-400">
+              <li><a href="#pmo-knowledge" class="hover:text-electric-orange transition-colors">PMO Knowledge (6 Módulos)</a></li>
+              <li><a href="#proyectos" class="hover:text-electric-orange transition-colors">Proyectos con Carrusel</a></li>
+              <li><a href="#capacitaciones" class="hover:text-electric-orange transition-colors">Capacitaciones y Eventos</a></li>
+              <li><a href="#nosotros" class="hover:text-electric-orange transition-colors">Acerca de CIPRO</a></li>
+            </ul>
+          </div>
+
+          <div class="md:col-span-4">
+            <h4 class="text-white font-bold mb-3 uppercase tracking-widest text-xs">Convocatoria de Miembros</h4>
+            <p class="text-gray-400 text-xs mb-5 leading-relaxed">
+              ¿Quieres unirte como miembro activo de CIPRO y acceder al modo de edición y desarrollo de proyectos?
+            </p>
+            <button onclick="openPostulacionModal()" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white text-black font-bold text-xs hover:bg-electric-orange hover:text-white transition-all shadow-md cursor-pointer">
+              <span>Postular a CIPRO</span>
+              <span>↗</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="pt-6 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500">
+          <p>© 2026 CIPRO - Círculo de Gestión de Proyectos. Todos los derechos reservados.</p>
+          <div class="flex gap-6">
+            <button onclick="switchUserRole(!isMember)" class="text-electric-orange hover:underline">
+              Cambiar rol de usuario (Simulador)
+            </button>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ==================== MODALES (OVERLAYS) ==================== -->
+
+  <!-- 1. MODAL ENFOCADO: PMO KNOWLEDGE (Detalle de cada uno de los 6 temas) -->
+  <div id="modalPMOKnowledge" class="modal-backdrop fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
+    <div class="modal-card relative w-full max-w-2xl bg-[#090D14] border border-white/10 rounded-3xl overflow-hidden shadow-2xl max-h-[90vh] flex flex-col">
+      <!-- Decoración superior naranja -->
+      <div class="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-1 bg-gradient-to-r from-transparent via-electric-orange to-transparent"></div>
+
+      <!-- Header del modal con botón X claro -->
+      <div class="p-6 border-b border-white/10 flex items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div id="pmoModalIcon" class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-2xl">
+            📚
+          </div>
+          <div>
+            <h3 id="pmoModalTitle" class="text-lg md:text-xl font-bold text-white">Título de PMO Knowledge</h3>
+            <span class="text-[11px] text-electric-orange font-semibold uppercase tracking-wider">PMO Framework CIPRO</span>
+          </div>
+        </div>
+        <button onclick="closeModal('modalPMOKnowledge')" class="w-9 h-9 rounded-full bg-white/5 hover:bg-white/15 border border-white/10 text-gray-300 hover:text-white flex items-center justify-center text-lg font-bold transition-all cursor-pointer" aria-label="Cerrar modal">
+          ✕
+        </button>
+      </div>
+
+      <!-- Contenido scrolleable -->
+      <div class="p-6 overflow-y-auto space-y-6 flex-1 text-sm">
+        <!-- Descripción y detalles -->
+        <div>
+          <h4 class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Descripción General</h4>
+          <p id="pmoModalDesc" class="text-gray-300 leading-relaxed text-xs md:text-sm"></p>
+        </div>
+
+        <!-- Metodología y Buenas Prácticas -->
+        <div class="p-4 rounded-2xl bg-white/[0.03] border border-white/5">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-electric-orange mb-2">Enfoque Técnico y Estándares</h4>
+          <p id="pmoModalMethodology" class="text-gray-300 text-xs leading-relaxed"></p>
+        </div>
+
+        <!-- Documentos y PDFs descargables -->
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-gray-400">Documentos y Plantillas Disponibles (PDF)</h4>
+            <!-- Botón Subir PDF (Solo Miembros) -->
+            <button onclick="openUploadPDFModal('PMO Knowledge')" class="member-only hidden text-xs text-electric-orange hover:underline font-bold">
+              + Subir nuevo PDF
+            </button>
+          </div>
+          <div id="pmoModalFilesList" class="space-y-2">
+            <!-- Lista inyectada por JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer del modal -->
+      <div class="p-4 border-t border-white/10 bg-[#070A10] flex items-center justify-between">
+        <span class="text-xs text-gray-400">Acceso público general: Descarga libre de plantillas</span>
+        <button onclick="closeModal('modalPMOKnowledge')" class="px-5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold transition-all">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. MODAL ADAPTATIVO: PROYECTO COMPLETO (BLOQUES: CAUSAS, SOLUCIONES, ANEXOS) -->
+  <div id="modalProjectDetail" class="modal-backdrop fixed inset-0 z-[120] flex items-center justify-center p-3 md:p-6 bg-black/85 backdrop-blur-md">
+    <div class="modal-card relative w-full max-w-4xl bg-[#090D14] border border-white/10 rounded-3xl overflow-hidden shadow-2xl max-h-[92vh] flex flex-col">
+      <!-- Línea superior resplandor -->
+      <div class="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-1 bg-gradient-to-r from-transparent via-electric-orange to-transparent"></div>
+
+      <!-- Header del modal -->
+      <div class="p-6 border-b border-white/10 flex items-start justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <span id="projModalTag" class="px-2.5 py-0.5 rounded-full bg-electric-orange/15 text-electric-orange border border-electric-orange/30 text-[10px] font-bold uppercase tracking-wider">
+              Categoría
+            </span>
+            <span class="text-xs text-gray-400">Ficha Técnica de Proyecto</span>
+          </div>
+          <h3 id="projModalTitle" class="text-xl md:text-3xl font-extrabold text-white">Nombre del Proyecto</h3>
+        </div>
+        
+        <div class="flex items-center gap-2">
+          <!-- Botón de Editar Proyecto (Solo Miembros) -->
+          <button onclick="editCurrentProject()" class="member-only hidden px-3.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold transition-all flex items-center gap-1.5 border border-white/10">
+            <span>✏️</span>
+            <span>Editar</span>
+          </button>
+          <!-- Botón de Cerrar X -->
+          <button onclick="closeModal('modalProjectDetail')" class="w-9 h-9 rounded-full bg-white/5 hover:bg-white/15 border border-white/10 text-gray-300 hover:text-white flex items-center justify-center text-lg font-bold transition-all cursor-pointer" aria-label="Cerrar modal">
+            ✕
+          </button>
+        </div>
+      </div>
+
+      <!-- Contenido scrolleable estructurado en 3 BLOQUES SOLICITADOS -->
+      <div class="p-6 md:p-8 overflow-y-auto space-y-8 flex-1 text-sm">
+        
+        <!-- Galería / Mini-carrusel del Modal -->
+        <div id="projModalImageGallery" class="relative rounded-2xl overflow-hidden border border-white/10 h-56 md:h-80 bg-black">
+          <img id="projModalMainImg" src="" alt="Foto Proyecto" class="w-full h-full object-cover">
+          <div class="absolute bottom-3 left-3 bg-black/60 backdrop-blur-md px-3 py-1 rounded-lg text-xs text-white border border-white/10" id="projModalImgCounter">
+            Foto 1 / 3
+          </div>
+        </div>
+
+        <!-- Resumen breve -->
+        <div class="bg-white/[0.02] border border-white/5 p-4 rounded-2xl">
+          <p id="projModalShortDesc" class="text-gray-300 text-xs md:text-sm leading-relaxed italic"></p>
+        </div>
+
+        <!-- ================= BLOQUE 1: CAUSAS Y DIAGNÓSTICO ================= -->
+        <div class="space-y-3">
+          <div class="flex items-center gap-2 text-white">
+            <span class="w-6 h-6 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 flex items-center justify-center text-xs font-bold">1</span>
+            <h4 class="text-base font-bold text-white uppercase tracking-wide">Causas &amp; Contexto del Problema</h4>
+          </div>
+          <div class="p-5 rounded-2xl bg-[#0e131d] border border-white/5 text-gray-300 text-xs md:text-sm leading-relaxed" id="projModalCausas">
+            <!-- Inyectado por JS -->
+          </div>
+        </div>
+
+        <!-- ================= BLOQUE 2: SOLUCIONES & METODOLOGÍA ================= -->
+        <div class="space-y-3">
+          <div class="flex items-center gap-2 text-white">
+            <span class="w-6 h-6 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center text-xs font-bold">2</span>
+            <h4 class="text-base font-bold text-white uppercase tracking-wide">Soluciones Implementadas &amp; Metodología</h4>
+          </div>
+          <div class="p-5 rounded-2xl bg-[#0e131d] border border-white/5 text-gray-300 text-xs md:text-sm leading-relaxed" id="projModalSoluciones">
+            <!-- Inyectado por JS -->
+          </div>
+        </div>
+
+        <!-- ================= BLOQUE 3: ANEXOS & CONTENIDO MIXTO (PDFs, TEXTOS, ENTREGABLES) ================= -->
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2 text-white">
+              <span class="w-6 h-6 rounded-lg bg-electric-orange/15 border border-electric-orange/30 text-electric-orange flex items-center justify-center text-xs font-bold">3</span>
+              <h4 class="text-base font-bold text-white uppercase tracking-wide">Anexos, Entregables &amp; Múltiples PDFs</h4>
+            </div>
+
+            <!-- Botón Subir PDF Anexo (Solo Miembros) -->
+            <button onclick="openUploadPDFModal('Proyecto Anexos')" class="member-only hidden inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-electric-orange/20 text-electric-orange border border-electric-orange/30 text-xs font-bold hover:bg-electric-orange hover:text-white transition-all">
+              <span>+ Subir PDF</span>
+            </button>
+          </div>
+
+          <p class="text-xs text-gray-400">
+            Descarga la documentación oficial del proyecto (Project Charter, Cronograma Gantt/WBS, Informe de Resultados y Métricas EVM).
+          </p>
+
+          <div id="projModalAnexosList" class="space-y-2.5 pt-2">
+            <!-- Lista de PDFs inyectada dinámicamente -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Footer del modal -->
+      <div class="p-4 border-t border-white/10 bg-[#070A10] flex items-center justify-between">
+        <span class="text-xs text-gray-400">CIPRO Portfolio Case Study</span>
+        <button onclick="closeModal('modalProjectDetail')" class="px-5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold transition-all">
+          Cerrar Ficha
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. MODAL DE CAPACITACIONES (CON PESTAÑAS: TEMARIO, EXPOSITORES, MATERIAL) -->
+  <div id="modalEventDetail" class="modal-backdrop fixed inset-0 z-[120] flex items-center justify-center p-3 md:p-6 bg-black/85 backdrop-blur-md">
+    <div class="modal-card relative w-full max-w-3xl bg-[#090D14] border border-white/10 rounded-3xl overflow-hidden shadow-2xl max-h-[90vh] flex flex-col">
+      <!-- Línea superior naranja -->
+      <div class="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-1 bg-gradient-to-r from-transparent via-electric-orange to-transparent"></div>
+
+      <!-- Header del modal con botón X claro -->
+      <div class="p-6 border-b border-white/10 flex items-start justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <span id="eventModalBadge" class="px-2.5 py-0.5 rounded-full bg-electric-orange/15 text-electric-orange border border-electric-orange/30 text-[10px] font-bold uppercase tracking-wider">
+              Taller Especializado
+            </span>
+            <span id="eventModalDate" class="text-xs text-gray-400">15 Noviembre 2026</span>
+          </div>
+          <h3 id="eventModalTitle" class="text-xl md:text-2xl font-bold text-white">Nombre de la Capacitación</h3>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <!-- Botón Editar Evento (Solo Miembros) -->
+          <button onclick="editCurrentEvent()" class="member-only hidden px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold transition-all border border-white/10">
+            ✏️ Editar
+          </button>
+          <button onclick="closeModal('modalEventDetail')" class="w-9 h-9 rounded-full bg-white/5 hover:bg-white/15 border border-white/10 text-gray-300 hover:text-white flex items-center justify-center text-lg font-bold transition-all cursor-pointer" aria-label="Cerrar modal">
+            ✕
+          </button>
+        </div>
+      </div>
+
+      <!-- NAVEGACIÓN POR PESTAÑAS (TABS) -->
+      <div class="px-6 pt-4 border-b border-white/10 bg-[#070A10] flex gap-2 overflow-x-auto">
+        <button onclick="switchEventTab('temario')" id="tabBtnTemario" class="tab-btn active px-4 py-2 rounded-xl text-xs font-bold border border-transparent transition-all flex items-center gap-2">
+          <span>📋</span>
+          <span>Temario</span>
+        </button>
+        <button onclick="switchEventTab('expositores')" id="tabBtnExpositores" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold text-gray-400 hover:text-white border border-transparent transition-all flex items-center gap-2">
+          <span>👥</span>
+          <span>Expositores</span>
+        </button>
+        <button onclick="switchEventTab('material')" id="tabBtnMaterial" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold text-gray-400 hover:text-white border border-transparent transition-all flex items-center gap-2">
+          <span>📁</span>
+          <span>Material &amp; PDFs</span>
+        </button>
+      </div>
+
+      <!-- CONTENIDO DE LAS PESTAÑAS (SCROLLEABLE) -->
+      <div class="p-6 md:p-8 overflow-y-auto flex-1">
+        
+        <!-- Pestaña 1: TEMARIO -->
+        <div id="tabContentTemario" class="space-y-4">
+          <div class="p-4 rounded-2xl bg-white/[0.02] border border-white/5">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-electric-orange mb-1">Objetivo del Programa</h4>
+            <p id="eventModalObjective" class="text-xs md:text-sm text-gray-300 leading-relaxed"></p>
+          </div>
+
+          <h4 class="text-xs font-bold uppercase tracking-wider text-gray-400">Módulos de la Capacitación</h4>
+          <div id="eventModalModulesList" class="space-y-3">
+            <!-- Inyectado por JS -->
+          </div>
+        </div>
+
+        <!-- Pestaña 2: EXPOSITORES -->
+        <div id="tabContentExpositores" class="hidden space-y-4">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-gray-400">Ponentes y Consultores Asignados</h4>
+          <div id="eventModalSpeakersList" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Inyectado por JS -->
+          </div>
+        </div>
+
+        <!-- Pestaña 3: MATERIAL & ADJUNTOS -->
+        <div id="tabContentMaterial" class="hidden space-y-4">
+          <div class="flex items-center justify-between">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-gray-400">Material de Estudio y Diapositivas (PDF)</h4>
+            <!-- Botón Subir Material (Solo Miembros) -->
+            <button onclick="openUploadPDFModal('Capacitación Material')" class="member-only hidden text-xs text-electric-orange hover:underline font-bold">
+              + Subir nuevo Material
+            </button>
+          </div>
+
+          <div id="eventModalMaterialsList" class="space-y-2.5">
+            <!-- Inyectado por JS -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Footer del modal -->
+      <div class="p-4 border-t border-white/10 bg-[#070A10] flex items-center justify-between">
+        <span class="text-xs text-gray-400">Certificación y Asistencia CIPRO</span>
+        <button onclick="closeModal('modalEventDetail')" class="px-5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold transition-all">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODALES ADMINISTRATIVOS (SOLO MIEMBROS) ==================== -->
+
+  <!-- MODAL: AGREGAR NUEVO PROYECTO (MIEMBRO/ADMIN) -->
+  <div id="modalAddProject" class="modal-backdrop fixed inset-0 z-[130] flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
+    <div class="modal-card relative w-full max-w-xl bg-[#090D14] border border-white/10 rounded-3xl overflow-hidden shadow-2xl max-h-[90vh] flex flex-col">
+      <div class="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-1 bg-gradient-to-r from-transparent via-electric-orange to-transparent"></div>
+
+      <div class="p-6 border-b border-white/10 flex items-center justify-between">
+        <div>
+          <h3 class="text-lg font-bold text-white">Publicar Nuevo Proyecto</h3>
+          <p class="text-xs text-gray-400">Acción exclusiva para Miembros y Directiva CIPRO</p>
+        </div>
+        <button onclick="closeModal('modalAddProject')" class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/15 text-gray-400 hover:text-white flex items-center justify-center font-bold">✕</button>
+      </div>
+
+      <form id="formAddProject" onsubmit="handleSaveNewProject(event)" class="p-6 overflow-y-auto space-y-4 flex-1 text-xs">
+        <div>
+          <label class="block font-medium text-gray-300 mb-1">Título del Proyecto *</label>
+          <input type="text" id="newProjTitle" required placeholder="Ej: Implementación PMO Ágil en Salud" class="w-full bg-[#111622] border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-electric-orange">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-medium text-gray-300 mb-1">Categoría / Tag *</label>
+            <input type="text" id="newProjTag" required placeholder="Ej: Salud & PMO" class="w-full bg-[#111622] border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-electric-orange">
+          </div>
+          <div>
+            <label class="block font-medium text-gray-300 mb-1">Imágenes para Carrusel (URLs separadas por coma)</label>
+            <input type="text" id="newProjImgs" placeholder="public/images/proyectos/gestion-agil.png" class="w-full bg-[#111622] border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-electric-orange">
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-medium text-gray-300 mb-1">Descripción Breve (Para tarjeta) *</label>
+          <input type="text" id="newProjShortDesc" required placeholder="Breve resumen de 1-2 líneas..." class="w-full bg-[#111622] border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-electric-orange">
+        </div>
+
+        <div>
+          <label class="block font-medium text-gray-300 mb-1">Bloque 1: Causas / Problemática *</label>
+          <textarea id="newProjCausas" rows="2" required placeholder="Describa los desafíos iniciales y causas del proyecto..." class="w-full bg-[#111622] border border-white/10 rounded-xl p-3 text-white focus:outline-none focus:border-electric-orange"></textarea>
+        </div>
+
+        <div>
+          <label class="block font-medium text-gray-300 mb-1">Bloque 2: Soluciones Implementadas *</label>
+          <textarea id="newProjSoluciones" rows="2" required placeholder="Describa la metodología, sprints y herramientas utilizadas..." class="w-full bg-[#111622] border border-white/10 rounded-xl p-3 text-white focus:outline-none focus:border-electric-orange"></textarea>
+        </div>
+
+        <div>
+          <label class="block font-medium text-gray-300 mb-1">Bloque 3: Nombre de PDF Adjunto Inicial</label>
+          <input type="text" id="newProjPdf" placeholder="Ej: Project_Charter_Oficial.pdf" class="w-full bg-[#111622] border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-electric-orange">
+        </div>
+
+        <div class="pt-3 border-t border-white/10 flex justify-end gap-2">
+          <button type="button" onclick="closeModal('modalAddProject')" class="px-4 py-2 rounded-xl bg-white/5 text-gray-300 hover:bg-white/10">Cancelar</button>
+          <button type="submit" class="px-5 py-2.5 rounded-xl bg-electric-orange text-white font-bold hover:bg-[#ff691e] transition-all shadow-[0_0_20px_rgba(255,85,0,0.3)]">Guardar y Publicar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: SUBIR PDF / ANEXO (MIEMBRO/ADMIN) -->
+  <div id="modalUploadPDF" class="modal-backdrop fixed inset-0 z-[130] flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
+    <div class="modal-card relative w-full max-w-md bg-[#090D14] border border-white/10 rounded-3xl overflow-hidden shadow-2xl p-6 space-y-4">
+      <div class="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-1 bg-gradient-to-r from-transparent via-electric-orange to-transparent"></div>
+
+      <div class="flex items-center justify-between pb-3 border-b border-white/10">
+        <div>
+          <h3 class="text-base font-bold text-white">Subir Documento PDF</h3>
+          <p id="uploadPDFTargetText" class="text-xs text-gray-400">Destino: PMO Knowledge</p>
+        </div>
+        <button onclick="closeModal('modalUploadPDF')" class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/15 text-gray-400 hover:text-white flex items-center justify-center font-bold">✕</button>
+      </div>
+
+      <form id="formUploadPDF" onsubmit="handleUploadPDFSubmit(event)" class="space-y-4 text-xs">
+        <div>
+          <label class="block font-medium text-gray-300 mb-1">Nombre Oficial del Archivo *</label>
+          <input type="text" id="pdfUploadName" required placeholder="Ej. Matriz_Gestion_Riesgos_2026.pdf" class="w-full bg-[#111622] border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-electric-orange">
+        </div>
+
+        <!-- Zona de Drag & Drop simulada -->
+        <div class="border-2 border-dashed border-white/20 hover:border-electric-orange/50 rounded-2xl p-6 text-center transition-colors cursor-pointer bg-white/[0.01]">
+          <div class="text-2xl mb-2">📄</div>
+          <div class="font-bold text-white mb-1">Arrastra tu archivo PDF aquí</div>
+          <p class="text-[11px] text-gray-400">o haz clic para explorar en tu equipo (PDF máx. 50MB)</p>
+          <input type="file" accept=".pdf" class="hidden" id="realPdfFileInput" onchange="handleRealPdfChange(this)">
+          <button type="button" onclick="document.getElementById('realPdfFileInput').click()" class="mt-3 px-3 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-white text-[11px]">
+            Seleccionar archivo
+          </button>
+          <div id="selectedPdfFeedback" class="mt-2 text-electric-orange font-medium hidden text-[11px]"></div>
+        </div>
+
+        <div>
+          <label class="block font-medium text-gray-300 mb-1">Descripción o Versión del Documento</label>
+          <input type="text" id="pdfUploadDesc" placeholder="Versión 2.0 aprobada por PMO Directiva" class="w-full bg-[#111622] border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-electric-orange">
+        </div>
+
+        <div class="pt-2 flex justify-end gap-2 border-t border-white/10">
+          <button type="button" onclick="closeModal('modalUploadPDF')" class="px-4 py-2 rounded-xl bg-white/5 text-gray-300 hover:bg-white/10">Cancelar</button>
+          <button type="submit" class="px-5 py-2.5 rounded-xl bg-electric-orange text-white font-bold hover:bg-[#ff691e] transition-all shadow-[0_0_20px_rgba(255,85,0,0.3)]">Subir PDF</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: LOGIN DE MIEMBROS -->
+  <div id="modalLogin" class="modal-backdrop fixed inset-0 z-[140] flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
+    <div class="modal-card relative w-full max-w-md bg-[#090D14] border border-white/10 rounded-3xl overflow-hidden shadow-2xl p-6 space-y-5">
+      <div class="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-1 bg-gradient-to-r from-transparent via-electric-orange to-transparent"></div>
+
+      <div class="flex items-start justify-between border-b border-white/5 pb-4">
+        <div>
+          <h3 class="text-lg font-bold text-white" id="loginModalTitle">Acceso Miembros CIPRO</h3>
+          <p class="text-xs text-gray-400">Ingresa tu código y contraseña para desbloquear el modo edición</p>
+        </div>
+        <button onclick="closeModal('modalLogin')" class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/15 text-gray-400 hover:text-white flex items-center justify-center font-bold">✕</button>
+      </div>
+
+      <form id="formLogin" onsubmit="handleMemberLogin(event)" class="space-y-4 text-xs">
+        <div>
+          <label class="block font-medium text-gray-300 mb-1">Código de Miembro / Estudiante UNI *</label>
+          <input type="text" required id="lCodigo" value="20233999A" class="w-full bg-[#111622] border border-white/10 rounded-xl px-4 py-2.5 text-white uppercase focus:outline-none focus:border-electric-orange">
+        </div>
+        <div>
+          <label class="block font-medium text-gray-300 mb-1">Contraseña de Miembro *</label>
+          <input type="password" required id="lPassword" value="cipro" class="w-full bg-[#111622] border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-electric-orange">
+        </div>
+        <button type="submit" class="w-full py-2.5 rounded-xl bg-electric-orange hover:bg-[#ff6a1f] text-white font-bold transition-all shadow-[0_0_20px_rgba(255,85,0,0.3)]">
+          Ingresar como Miembro (Activar Modo Edición)
+        </button>
+      </form>
+
+      <div id="memberDashboard" class="hidden space-y-4 text-xs">
+        <div class="p-4 rounded-xl bg-[#111622] border border-white/10 space-y-1">
+          <div class="flex items-center justify-between">
+            <span class="text-gray-400">Estado</span>
+            <span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-bold">● Miembro Activo</span>
+          </div>
+          <div class="text-sm font-bold text-white">Miembro Directiva CIPRO</div>
+          <div class="text-gray-400">Código: 20233999A | Rol: Permisos de Edición y Subida</div>
+        </div>
+
+        <div class="flex items-center justify-between pt-3 border-t border-white/5">
+          <button onclick="handleLogout()" class="text-xs text-red-400 hover:underline">Cerrar Sesión (Volver a General)</button>
+          <button onclick="closeModal('modalLogin')" class="px-4 py-1.5 rounded-xl bg-electric-orange text-white font-semibold">Listo</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: POSTULACIÓN PARA NUEVOS MIEMBROS -->
+  <div id="modalPostulacion" class="modal-backdrop fixed inset-0 z-[140] flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
+    <div class="modal-card relative w-full max-w-lg bg-[#090D14] border border-white/10 rounded-3xl overflow-hidden shadow-2xl p-6 space-y-4">
+      <div class="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-1 bg-gradient-to-r from-transparent via-electric-orange to-transparent"></div>
+
+      <div class="flex items-start justify-between border-b border-white/5 pb-3">
+        <div>
+          <h3 class="text-base font-bold text-white">Convocatoria CIPRO</h3>
+          <p class="text-xs text-gray-400">Postula para integrarte a nuestros comités de proyectos</p>
+        </div>
+        <button onclick="closeModal('modalPostulacion')" class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/15 text-gray-400 hover:text-white flex items-center justify-center font-bold">✕</button>
+      </div>
+
+      <form id="formPostulacion" onsubmit="handleSendPostulacion(event)" class="space-y-3.5 text-xs">
+        <div>
+          <label class="block font-medium text-gray-300 mb-1">Nombres y Apellidos *</label>
+          <input type="text" id="p_nombres" required placeholder="Ej: Diana Mendoza Vargas" class="w-full bg-[#111622] border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-electric-orange">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-medium text-gray-300 mb-1">Código UNI *</label>
+            <input type="text" id="p_codigoUni" required placeholder="20231234A" class="w-full bg-[#111622] border border-white/10 rounded-xl px-4 py-2.5 text-white uppercase focus:outline-none focus:border-electric-orange">
+          </div>
+          <div>
+            <label class="block font-medium text-gray-300 mb-1">WhatsApp *</label>
+            <input type="tel" id="p_whatsapp" required placeholder="987654321" class="w-full bg-[#111622] border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-electric-orange">
+          </div>
+        </div>
+        <div>
+          <label class="block font-medium text-gray-300 mb-1">Correo Electrónico *</label>
+          <input type="email" id="p_correo" required placeholder="tu.correo@uni.pe" class="w-full bg-[#111622] border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-electric-orange">
+        </div>
+        <div class="pt-2 flex justify-end gap-2 border-t border-white/10">
+          <button type="button" onclick="closeModal('modalPostulacion')" class="px-4 py-2 rounded-xl bg-white/5 text-gray-300 hover:bg-white/10">Cancelar</button>
+          <button type="submit" class="px-5 py-2.5 rounded-xl bg-electric-orange text-white font-bold hover:bg-[#ff691e]">Enviar Postulación</button>
+        </div>
+      </form>
+
+      <div id="postulacionSuccess" class="hidden text-center py-6 space-y-3">
+        <div class="w-12 h-12 mx-auto rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center text-xl font-bold">✓</div>
+        <h4 class="text-base font-bold text-white">¡Postulación Enviada con Éxito!</h4>
+        <p class="text-gray-300 text-xs">Nos pondremos en contacto contigo para coordinar la entrevista técnica.</p>
+        <button onclick="closeModal('modalPostulacion')" class="px-5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION FLOTANTE -->
+  <div id="toastNotification" class="fixed bottom-8 right-8 z-[150] px-5 py-3 rounded-2xl bg-[#0F141F] border border-electric-orange/40 text-white shadow-2xl flex items-center gap-3">
+    <div id="toastIcon" class="w-8 h-8 rounded-xl bg-electric-orange/20 text-electric-orange flex items-center justify-center text-base font-bold">
+      ✓
+    </div>
+    <div>
+      <div id="toastTitle" class="text-xs font-bold text-white">Operación completada</div>
+      <div id="toastMsg" class="text-[11px] text-gray-400">Los cambios han sido guardados con éxito.</div>
+    </div>
+  </div>
+
+  <!-- ==================== LÓGICA JAVASCRIPT (VANILLA JS) ==================== -->
+  <script>
+    /* ==========================================================================
+       1. CONTROL DE ROLES Y PERMISOS (MIEMBRO VS. GENERAL)
+       ========================================================================== */
+    // Variable lógica de rol:
+    // - false = Usuario General (Solo Lectura: ve proyectos, descarga PDFs, ve capacitaciones)
+    // - true  = Miembro / Administrador (Modo Edición: agregar proyectos, subir PDFs, editar)
+    let isMember = false; // Por defecto modo visualización general
+
+    function switchUserRole(memberState) {
+      isMember = memberState;
+      updateRoleUI();
+
+      // Notificación al usuario
+      const msg = isMember 
+        ? "Modo Miembro (Admin) ACTIVADO. Permisos de edición y subida habilitados." 
+        : "Modo General (Solo Lectura) ACTIVADO. Permisos de visualización estándar.";
+      showToast(isMember ? "👑 Modo Edición Activo" : "👁️ Modo Lectura General", msg);
+    }
+
+    function updateRoleUI() {
+      // 1. Mostrar / Ocultar todos los botones protegidos con clase .member-only
+      const memberElements = document.querySelectorAll('.member-only');
+      memberElements.forEach(el => {
+        if (isMember) {
+          el.classList.remove('hidden');
+        } else {
+          el.classList.add('hidden');
+        }
+      });
+
+      // 2. Actualizar botones del selector en Header
+      const btnGen = document.getElementById('btnRoleGeneral');
+      const btnMem = document.getElementById('btnRoleMember');
+      const navLoginDot = document.getElementById('navLoginStatusDot');
+      const navLoginText = document.getElementById('navLoginText');
+      const footerRoleText = document.getElementById('footerRoleText');
+      const roleBanner = document.getElementById('roleAlertBanner');
+      const roleBannerText = document.getElementById('roleBannerText');
+      const roleBannerIcon = document.getElementById('roleBannerIcon');
+
+      if (isMember) {
+        btnGen.className = "px-3 py-1.5 rounded-full font-medium transition-all text-gray-400 hover:text-white";
+        btnMem.className = "px-3 py-1.5 rounded-full font-bold transition-all text-white bg-electric-orange shadow-[0_0_15px_rgba(255,85,0,0.5)]";
+        navLoginDot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-pulse";
+        navLoginText.textContent = "Miembro Activo";
+        footerRoleText.textContent = "Miembro Directiva / Admin (Modo Edición)";
+        footerRoleText.className = "text-electric-orange font-bold";
+
+        // Banner informativo sutil
+        roleBanner.classList.remove('hidden');
+        roleBanner.className = "fixed top-[66px] left-1/2 -translate-x-1/2 z-40 px-4 py-1.5 rounded-full text-xs font-semibold backdrop-blur-lg border transition-all duration-300 flex items-center gap-2 bg-emerald-950/80 border-emerald-500/40 text-emerald-300";
+        roleBannerIcon.textContent = "👑";
+        roleBannerText.textContent = "Modo Miembro Activo: Botones de creación, edición y carga de PDFs habilitados.";
+      } else {
+        btnGen.className = "px-3 py-1.5 rounded-full font-bold transition-all text-white bg-white/20";
+        btnMem.className = "px-3 py-1.5 rounded-full font-medium transition-all text-gray-400 hover:text-white";
+        navLoginDot.className = "w-2 h-2 rounded-full bg-gray-400";
+        navLoginText.textContent = "Login Miembros";
+        footerRoleText.textContent = "Usuario General (Solo Lectura)";
+        footerRoleText.className = "text-gray-300";
+
+        // Banner informativo sutil
+        roleBanner.classList.remove('hidden');
+        roleBanner.className = "fixed top-[66px] left-1/2 -translate-x-1/2 z-40 px-4 py-1.5 rounded-full text-xs font-semibold backdrop-blur-lg border transition-all duration-300 flex items-center gap-2 bg-white/5 border-white/10 text-gray-300";
+        roleBannerIcon.textContent = "👁️";
+        roleBannerText.textContent = "Modo Visualización General: Permisos de lectura y descarga de PDFs.";
+      }
+
+      // Ocultar banner automáticamente después de 4 segundos
+      setTimeout(() => {
+        roleBanner.classList.add('hidden');
+      }, 4000);
+    }
+
+    /* ==========================================================================
+       2. SECCIÓN PMO KNOWLEDGE (DATOS DE LOS 6 MÓDULOS & MODAL ENFOCADO)
+       ========================================================================== */
+    const pmoKnowledgeData = {
+      biblioteca: {
+        title: "Biblioteca de Recursos",
+        icon: "📚",
+        desc: "Directorio institucional con plantillas oficiales estandarizadas de gestión de proyectos según directrices del PMI y PMBOK 7. Contiene más de 500 templates categorizados listos para su adaptación en consultoría e investigación.",
+        methodology: "Estandarización basada en ISO 21500 y PMBOK 7ma Edición. Incluye plantillas editables para Project Charters, matrices RACI, planes de gestión de costos y actas de aceptación de entregables.",
+        pdfs: [
+          { name: "Plantilla_Project_Charter_PMBOK7.pdf", size: "2.4 MB", type: "Template Oficial" },
+          { name: "Matriz_RACI_Asignacion_Responsabilidades.pdf", size: "1.1 MB", type: "Herramienta Práctica" },
+          { name: "Guia_Estructuracion_WBS_EDT.pdf", size: "3.7 MB", type: "Manual Técnico" },
+          { name: "Plan_Gestion_Costos_Y_Presupuestos.pdf", size: "1.9 MB", type: "Plantilla Financiera" }
+        ]
+      },
+      agiles: {
+        title: "Metodologías Ágiles",
+        icon: "⚡",
+        desc: "Frameworks y ceremonias ágiles aplicadas a consultoría universitaria. Cubre implementación de Scrum, tableros Kanban de flujo continuo, SAFe para escalamiento y diseño iterativo de productos mínimos viables.",
+        methodology: "Marco de trabajo iterativo con sprints de 2 semanas, daily standups de 15 minutos, refinamiento continuo de backlog y retrospectivas orientadas a la mejora kaizen.",
+        pdfs: [
+          { name: "Guia_Scrum_Team_Roles_Y_Ceremonias.pdf", size: "1.8 MB", type: "Manual Metodológico" },
+          { name: "Kanban_Board_Politicas_Flujo_WIP.pdf", size: "1.2 MB", type: "Plantilla Operativa" },
+          { name: "Plantilla_User_Stories_Criterios_Aceptacion.pdf", size: "2.1 MB", type: "Template Ágil" }
+        ]
+      },
+      riesgos: {
+        title: "Gestión de Riesgos",
+        icon: "🛡️",
+        desc: "Metodología integral para la identificación, evaluación cualitativa y cuantitativa, planificación de respuestas y monitoreo constante de amenazas y oportunidades en proyectos de alto impacto.",
+        methodology: "Uso de matrices de severidad (Probabilidad x Impacto), diagramas de tornado para análisis de sensibilidad y planes de contingencia con asignación explícita de Risk Owners.",
+        pdfs: [
+          { name: "Matriz_Probabilidad_Impacto_CIPRO.pdf", size: "1.5 MB", type: "Matriz Cuantitativa" },
+          { name: "Plan_Respuestas_Contingencias_Riesgos.pdf", size: "2.6 MB", type: "Protocolo Operativo" },
+          { name: "Checklist_Riesgos_Proyectos_Ingenieria.pdf", size: "950 KB", type: "Checklist Verificación" }
+        ]
+      },
+      kpis: {
+        title: "KPIs y Métricas",
+        icon: "📊",
+        desc: "Sistema de medición del desempeño basado en Gestión del Valor Ganado (Earned Value Management - EVM). Permite monitorear desvíos en costo, cronograma y productividad en tiempo real.",
+        methodology: "Cálculo y seguimiento semanal de SPI (Schedule Performance Index), CPI (Cost Performance Index), Burndown charts y tableros ejecutivos integrados en Power BI.",
+        pdfs: [
+          { name: "Manual_Calculo_EVM_Valor_Ganado.pdf", size: "3.2 MB", type: "Guía de Indicadores" },
+          { name: "Dashboard_KPIs_Seguimiento_Semanal.pdf", size: "4.1 MB", type: "Reporte Ejecutivo" },
+          { name: "Ficha_Tecnica_Indices_SPI_CPI.pdf", size: "1.4 MB", type: "Ficha Técnica" }
+        ]
+      },
+      pmo_setup: {
+        title: "PMO Setup",
+        icon: "⚙️",
+        desc: "Guía para estructurar y poner en marcha una Oficina de Gestión de Proyectos desde cero. Define el modelo de gobernanza, niveles de madurez y catálogo de servicios ofrecidos a la organización.",
+        methodology: "Enfoque adaptativo según las 3 tipologías PMO: de Soporte (templates y capacitación), de Control (auditorías y cumplimiento) y Directiva (gestión directa de programas estratégicos).",
+        pdfs: [
+          { name: "PMO_Charter_Constitucion_Oficina.pdf", size: "2.9 MB", type: "Documento de Gobernanza" },
+          { name: "Modelo_Madurez_PMO_Evaluacion.pdf", size: "3.5 MB", type: "Framework Diagnóstico" },
+          { name: "Catalogo_Servicios_PMO_Consultoria.pdf", size: "1.7 MB", type: "Portafolio de Servicios" }
+        ]
+      },
+      documentacion: {
+        title: "Documentación",
+        icon: "📑",
+        desc: "Estandarización de toda la papelería técnica y documental que respalda el ciclo de vida del proyecto, desde la fase de inicio y planificación hasta el cierre administrativo y lecciones aprendidas.",
+        methodology: "Trazabilidad documental total, versionado semántico de entregables y repositorio centralizado con firma de stakeholders clave.",
+        pdfs: [
+          { name: "Acta_Reunion_Minuta_Decisiones.pdf", size: "850 KB", type: "Formato Administrativo" },
+          { name: "Informe_Lecciones_Aprendidas_Cierre.pdf", size: "2.3 MB", type: "Reporte de Cierre" },
+          { name: "Certificado_Aceptacion_Entregable.pdf", size: "1.1 MB", type: "Formato Oficial" }
+        ]
+      }
+    };
+
+    let currentOpenPmoKey = 'biblioteca';
+
+    function openPMOModal(key) {
+      currentOpenPmoKey = key;
+      const data = pmoKnowledgeData[key];
+      if (!data) return;
+
+      document.getElementById('pmoModalTitle').textContent = data.title;
+      document.getElementById('pmoModalIcon').textContent = data.icon;
+      document.getElementById('pmoModalDesc').textContent = data.desc;
+      document.getElementById('pmoModalMethodology').textContent = data.methodology;
+
+      const listContainer = document.getElementById('pmoModalFilesList');
+      listContainer.innerHTML = data.pdfs.map((pdf, idx) => `
+        <div class="flex items-center justify-between p-3 rounded-xl bg-white/[0.02] border border-white/5 hover:border-electric-orange/30 transition-all">
+          <div class="flex items-center gap-3">
+            <span class="text-xl">📄</span>
+            <div>
+              <div class="text-xs font-bold text-white">${pdf.name}</div>
+              <div class="text-[10px] text-gray-400">${pdf.type} • ${pdf.size}</div>
+            </div>
+          </div>
+          <button onclick="simulatePdfDownload('${pdf.name}')" class="px-3 py-1.5 rounded-lg bg-electric-orange/15 hover:bg-electric-orange text-electric-orange hover:text-white border border-electric-orange/30 text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+            <span>Descargar PDF</span>
+          </button>
+        </div>
+      `).join('');
+
+      openModal('modalPMOKnowledge');
+    }
+
+    /* ==========================================================================
+       3. SECCIÓN PROYECTOS (CARRUSEL INTEGRADO, STOPPROPAGATION & MODAL 3 BLOQUES)
+       ========================================================================== */
+    const projectsData = [
+      {
+        id: "p1",
+        title: "Ingeniero Locaso",
+        tag: "Inteligencia Artificial & PMO",
+        shortDesc: "Sistema automatizado de gestión y analítica académica que reduce tiempos de asignación docente.",
+        images: [
+          "public/images/proyectos/ingeniero-locaso.png",
+          "public/images/proyectos/gestion-agil.png",
+          "public/images/cards/recursos_premium.webp"
+        ],
+        currentImgIdx: 0,
+        causas: "La dispersión de información y la falta de trazabilidad en los procesos de matrícula y asignación académica generaban retrasos de hasta 4 semanas al inicio de cada semestre, sobrecargando al equipo docente y frustrando a los estudiantes.",
+        soluciones: "Se conformó un equipo multidisciplinario bajo metodología Scrum con sprints quincenales, integrando un algoritmo heurístico con IA para optimización de horarios. La PMO estandarizó la matriz de riesgos y el control de valor ganado.",
+        anexos: [
+          { name: "Acta_Constitucion_Ingeniero_Locaso.pdf", size: "2.4 MB", date: "12 Oct 2026", desc: "Project Charter firmado con patrocinadores" },
+          { name: "EDT_WBS_Desglose_Trabajo.pdf", size: "3.8 MB", date: "28 Oct 2026", desc: "Estructura de Desglose de Trabajo con 5 niveles" },
+          { name: "Informe_Resultados_KPIs_EVM.pdf", size: "4.9 MB", date: "15 Dic 2026", desc: "Reporte final de desempeño con SPI 1.05 y CPI 1.02" }
+        ]
+      },
+      {
+        id: "p2",
+        title: "Transformación Digital",
+        tag: "Integración Empresarial",
+        shortDesc: "Red de integración y gobernanza de datos para optimización de flujos de valor en PYMEs.",
+        images: [
+          "public/images/proyectos/transformacion-digital.png",
+          "public/images/proyectos/pmo-estrategica.png",
+          "public/images/cards/capacitaciones.webp"
+        ],
+        currentImgIdx: 0,
+        causas: "Organizaciones con sistemas desconectados (silos de información), duplicidad de registros y ausencia de métricas en tiempo real que impedían la toma de decisiones oportuna por parte del comité ejecutivo.",
+        soluciones: "Implementación de arquitectura basada en microservicios y datalake unificado, guiada por estándares de gobernanza PMO. Se crearon tableros ejecutivos en Power BI con sincronización automatizada cada 6 horas.",
+        anexos: [
+          { name: "Plan_Gestion_Transformacion_Digital.pdf", size: "3.1 MB", date: "05 Nov 2026", desc: "Estrategia integral de digitalización" },
+          { name: "Arquitectura_Gobernanza_Datos.pdf", size: "4.5 MB", date: "20 Nov 2026", desc: "Diagramas técnicos y políticas de seguridad" }
+        ]
+      },
+      {
+        id: "p3",
+        title: "Gestión Ágil Institucional",
+        tag: "Agile & Scrum Framework",
+        shortDesc: "Transformación cultural hacia metodologías ágiles y gestión visual de proyectos complejos.",
+        images: [
+          "public/images/proyectos/gestion-agil.png",
+          "public/images/proyectos/optimizacion-procesos.png",
+          "public/images/cards/eventos_exclusivos.webp"
+        ],
+        currentImgIdx: 0,
+        causas: "Cuellos de botella recurrentes en comités de aprobación tradicionales con ciclos de retroalimentación superiores a 45 días, generando desviaciones de cronograma y pérdida de motivación en los equipos.",
+        soluciones: "Despliegue del marco de trabajo Scrum Híbrido, capacitando a más de 30 miembros en roles de Scrum Master y Product Owner. Se instalaron tableros Jira con métricas de Cycle Time y Throughput.",
+        anexos: [
+          { name: "Manual_Agile_Scrum_Institucional.pdf", size: "2.8 MB", date: "10 Dic 2026", desc: "Reglamento y lineamientos de ceremonias" },
+          { name: "Matriz_Riesgos_Agile_Transition.pdf", size: "1.6 MB", date: "18 Dic 2026", desc: "Mitigación de resistencia al cambio cultural" }
+        ]
+      },
+      {
+        id: "p4",
+        title: "PMO Estratégica ODS",
+        tag: "Sostenibilidad & Valor Social",
+        shortDesc: "Oficina de proyectos orientada al cumplimiento de los Objetivos de Desarrollo Sostenible.",
+        images: [
+          "public/images/proyectos/pmo-estrategica.png",
+          "public/images/proyectos/ingeniero-locaso.png",
+          "public/images/cards/recursos_premium.webp"
+        ],
+        currentImgIdx: 0,
+        causas: "Falta de alineación entre los proyectos de investigación académica y las necesidades reales de desarrollo sustentable en comunidades vulnerables de Lima.",
+        soluciones: "Creación de un portafolio estratégico alineado a los ODS 4 (Educación de Calidad) y ODS 9 (Industria e Innovación), aplicando priorización ponderada mediante matrices multicriterio AHP.",
+        anexos: [
+          { name: "Portafolio_Estrategico_ODS_CIPRO.pdf", size: "5.2 MB", date: "02 Ene 2027", desc: "Alineamiento estratégico y matriz AHP" },
+          { name: "Indicadores_Impacto_Social_KPIs.pdf", size: "2.1 MB", date: "14 Ene 2027", desc: "Métricas cuantitativas de impacto" }
+        ]
+      },
+      {
+        id: "p5",
+        title: "Optimización Lean",
+        tag: "Mejora Continua & Kaizen",
+        shortDesc: "Reducción sistemática de desperdicios operativos y aumento de la eficiencia de entrega.",
+        images: [
+          "public/images/proyectos/optimizacion-procesos.png",
+          "public/images/proyectos/transformacion-digital.png",
+          "public/images/cards/capacitaciones.webp"
+        ],
+        currentImgIdx: 0,
+        causas: "Sobrecarga de trámites burocráticos y tiempos muertos en la gestión de compras y suministros para proyectos de ingeniería.",
+        soluciones: "Mapeo de la cadena de valor (VSM - Value Stream Mapping), eliminación de actividades que no agregan valor y estandarización con metodología 5S y kanbans de reabastecimiento.",
+        anexos: [
+          { name: "Value_Stream_Mapping_Actual_Y_Futuro.pdf", size: "3.4 MB", date: "10 Feb 2027", desc: "Diagramas VSM antes y después de mejora" },
+          { name: "Informe_Ahorro_Costos_Y_LeadTime.pdf", size: "1.9 MB", date: "22 Feb 2027", desc: "Balance financiero con reducción del 35% en tiempos" }
+        ]
+      }
+    ];
+
+    let currentSelectedProjectId = "p1";
+
+    // Renderizar la cuadrícula de proyectos con carrusel integrado
+    function renderProjectsGrid() {
+      const grid = document.getElementById('projectsGrid');
+      grid.innerHTML = projectsData.map(proj => {
+        const currentImg = proj.images[proj.currentImgIdx] || proj.images[0];
+        const totalImgs = proj.images.length;
+
+        return `
+          <div class="project-card group rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.03] to-transparent overflow-hidden hover:border-electric-orange/40 hover:shadow-[0_0_40px_rgba(255,85,0,0.12)] transition-all duration-300 flex flex-col justify-between cursor-pointer" onclick="openProjectModal('${proj.id}')">
+            <div>
+              <!-- CARRUSEL DE IMÁGENES INTEGRADO EN LA TARJETA -->
+              <div class="relative h-52 w-full overflow-hidden bg-black/40">
+                <img id="cardImg-${proj.id}" src="${currentImg}" alt="${proj.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+
+                <!-- Flechas del Carrusel (Uso de stopPropagation para evitar abrir el modal) -->
+                <button type="button" onclick="prevCardImage(event, '${proj.id}')" class="carousel-arrow absolute left-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/70 hover:bg-electric-orange text-white flex items-center justify-center text-xs backdrop-blur-md border border-white/10 cursor-pointer z-10" aria-label="Foto anterior">
+                  ❮
+                </button>
+                <button type="button" onclick="nextCardImage(event, '${proj.id}')" class="carousel-arrow absolute right-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/70 hover:bg-electric-orange text-white flex items-center justify-center text-xs backdrop-blur-md border border-white/10 cursor-pointer z-10" aria-label="Siguiente foto">
+                  ❯
+                </button>
+
+                <!-- Indicador de foto en carrusel -->
+                <div class="absolute bottom-2.5 left-1/2 -translate-x-1/2 flex gap-1 z-10" id="cardDots-${proj.id}">
+                  ${proj.images.map((_, i) => `
+                    <span class="w-1.5 h-1.5 rounded-full transition-all ${i === proj.currentImgIdx ? 'bg-electric-orange w-3' : 'bg-white/40'}"></span>
+                  `).join('')}
+                </div>
+
+                <!-- Tag del proyecto -->
+                <div class="absolute top-3 left-3 bg-black/70 backdrop-blur-md px-2.5 py-0.5 rounded-full border border-white/10 text-[10px] font-bold text-electric-orange uppercase tracking-wider">
+                  ${proj.tag}
+                </div>
+              </div>
+
+              <!-- Contenido de la Tarjeta -->
+              <div class="p-6">
+                <h3 class="text-xl font-bold text-white mb-2 group-hover:text-electric-orange transition-colors">${proj.title}</h3>
+                <p class="text-gray-400 text-xs leading-relaxed line-clamp-2">${proj.shortDesc}</p>
+              </div>
+            </div>
+
+            <!-- Footer de la Tarjeta -->
+            <div class="px-6 pb-6 pt-2 border-t border-white/5 flex items-center justify-between text-xs">
+              <span class="text-gray-400 group-hover:text-white transition-colors">Ver ficha completa (3 bloques)</span>
+              <span class="text-electric-orange font-bold text-sm group-hover:translate-x-1 transition-transform">→</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Navegar imagen anterior en tarjeta con stopPropagation
+    function prevCardImage(event, projId) {
+      if (event) {
+        event.stopPropagation(); // ¡CRÍTICO: Evita disparar el clic de la tarjeta que abriría el modal!
+      }
+      const proj = projectsData.find(p => p.id === projId);
+      if (!proj) return;
+      proj.currentImgIdx = (proj.currentImgIdx - 1 + proj.images.length) % proj.images.length;
+      updateCardCarouselDisplay(proj);
+    }
+
+    // Navegar siguiente imagen en tarjeta con stopPropagation
+    function nextCardImage(event, projId) {
+      if (event) {
+        event.stopPropagation(); // ¡CRÍTICO: Evita disparar el clic de la tarjeta que abriría el modal!
+      }
+      const proj = projectsData.find(p => p.id === projId);
+      if (!proj) return;
+      proj.currentImgIdx = (proj.currentImgIdx + 1) % proj.images.length;
+      updateCardCarouselDisplay(proj);
+    }
+
+    function updateCardCarouselDisplay(proj) {
+      const imgEl = document.getElementById(`cardImg-${proj.id}`);
+      if (imgEl) {
+        imgEl.src = proj.images[proj.currentImgIdx];
+      }
+      const dotsEl = document.getElementById(`cardDots-${proj.id}`);
+      if (dotsEl) {
+        dotsEl.innerHTML = proj.images.map((_, i) => `
+          <span class="w-1.5 h-1.5 rounded-full transition-all ${i === proj.currentImgIdx ? 'bg-electric-orange w-3' : 'bg-white/40'}"></span>
+        `).join('');
+      }
+    }
+
+    // Abrir Modal amplio de proyecto (Bloques: Causas, Soluciones, Anexos)
+    function openProjectModal(projId) {
+      currentSelectedProjectId = projId;
+      const proj = projectsData.find(p => p.id === projId);
+      if (!proj) return;
+
+      document.getElementById('projModalTitle').textContent = proj.title;
+      document.getElementById('projModalTag').textContent = proj.tag;
+      document.getElementById('projModalShortDesc').textContent = proj.shortDesc;
+      document.getElementById('projModalMainImg').src = proj.images[proj.currentImgIdx] || proj.images[0];
+      document.getElementById('projModalImgCounter').textContent = `Foto ${proj.currentImgIdx + 1} de ${proj.images.length}`;
+
+      // Bloque 1: Causas
+      document.getElementById('projModalCausas').innerHTML = `
+        <p>${proj.causas}</p>
+      `;
+
+      // Bloque 2: Soluciones
+      document.getElementById('projModalSoluciones').innerHTML = `
+        <p>${proj.soluciones}</p>
+      `;
+
+      // Bloque 3: Anexos y Múltiples PDFs
+      const anexosContainer = document.getElementById('projModalAnexosList');
+      anexosContainer.innerHTML = proj.anexos.map((anexo, idx) => `
+        <div class="flex items-center justify-between p-3.5 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-electric-orange/30 transition-all">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 flex items-center justify-center font-bold text-xs">
+              PDF
+            </div>
+            <div>
+              <div class="text-xs font-bold text-white">${anexo.name}</div>
+              <div class="text-[10px] text-gray-400">${anexo.desc} • ${anexo.size} • ${anexo.date}</div>
+            </div>
+          </div>
+          <button onclick="simulatePdfDownload('${anexo.name}')" class="px-3.5 py-1.5 rounded-xl bg-electric-orange/15 hover:bg-electric-orange text-electric-orange hover:text-white border border-electric-orange/30 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+            <span>Descargar</span>
+          </button>
+        </div>
+      `).join('');
+
+      openModal('modalProjectDetail');
+    }
+
+    /* ==========================================================================
+       4. SECCIÓN CAPACITACIONES Y EVENTOS (TABS: TEMARIO, EXPOSITORES, MATERIAL)
+       ========================================================================== */
+    const eventsData = [
+      {
+        id: "e1",
+        title: "Masterclass: PMBOK 7 & Gestión Híbrida",
+        badge: "Certificación Oficial",
+        date: "25 Noviembre 2026 - 19:00 hrs",
+        modalidad: "Virtual Zoom + Campus UNI",
+        image: "public/images/cards/capacitaciones.webp",
+        shortDesc: "Aprende a integrar el marco predictivo con enfoques adaptativos y entrega de valor ágil.",
+        objective: "Capacitar a los participantes en los 8 dominios de desempeño del PMBOK 7 y en la técnica de Tailoring (adaptación) para proyectos de ingeniería y software.",
+        temario: [
+          { sesion: "Módulo 1", title: "Principios de Entrega de Valor y Sistema de Gobernanza", duracion: "2 horas" },
+          { sesion: "Módulo 2", title: "Los 8 Dominios de Desempeño: Del Alcance al Valor Ganado", duracion: "3 horas" },
+          { sesion: "Módulo 3", title: "Tailoring: Cómo combinar PMBOK con Scrum y Kanban", duracion: "2.5 horas" },
+          { sesion: "Módulo 4", title: "Taller Práctico de Simulación con Caso Real de Consultoría", duracion: "3 horas" }
+        ],
+        expositores: [
+          {
+            name: "Ing. Carlos Rodríguez, PMP",
+            cargo: "Director de PMO & Consultor Senior",
+            empresa: "12 años liderando megaproyectos en minería e infraestructura",
+            avatar: "👨‍💼"
+          },
+          {
+            name: "Mg. Lucía Benavides, PMI-ACP",
+            cargo: "Agile Coach & Directora Académica CIPRO",
+            empresa: "Especialista en escalamiento ágil SAFe y diseño organizacional",
+            avatar: "👩‍💼"
+          }
+        ],
+        materiales: [
+          { name: "Diapositivas_Oficiales_Masterclass_PMBOK7.pdf", size: "6.2 MB", desc: "Presentación integral con notas del expositor" },
+          { name: "Guia_Tailoring_Adaptacion_Hibrida.pdf", size: "2.5 MB", desc: "Framework paso a paso para proyectos híbridos" },
+          { name: "Workbook_Casos_Practicos_Resueltos.pdf", size: "3.9 MB", desc: "Ejercicios con soluciones detalladas" }
+        ]
+      },
+      {
+        id: "e2",
+        title: "Bootcamp: Agile Scrum & Jira Software",
+        badge: "Taller 100% Práctico",
+        date: "02 Diciembre 2026 - 18:30 hrs",
+        modalidad: "Laboratorio Cómputo UNI + Virtual",
+        image: "public/images/cards/eventos_exclusivos.webp",
+        shortDesc: "Domina la gestión de backlogs, ceremonias Scrum y configuración de tableros avanzados en Jira.",
+        objective: "Desarrollar habilidades prácticas para ejercer como Scrum Master o Product Owner, dominando la herramienta Jira Software desde el setup inicial hasta reportes de velocidad.",
+        temario: [
+          { sesion: "Sesión 1", title: "Fundamentos Ágiles y Definición de Historias de Usuario (INVEST)", duracion: "3 horas" },
+          { sesion: "Sesión 2", title: "Configuración de Jira: Workflows, Epics y Estimación Fibonacci", duracion: "3 horas" },
+          { sesion: "Sesión 3", title: "Simulación de Sprints y Ceremonias: Daily, Review y Retrospectiva", duracion: "3 horas" },
+          { sesion: "Sesión 4", title: "Métricas Ágiles: Burn-down, Burn-up y Control Charts", duracion: "2 horas" }
+        ],
+        expositores: [
+          {
+            name: "Ing. David Alarcón, PSM III",
+            cargo: "Lead Scrum Master en FinTech",
+            empresa: "Certificado Professional Scrum Master nivel 3 con 8 años en banca",
+            avatar: "🧑‍💻"
+          }
+        ],
+        materiales: [
+          { name: "Plantilla_Historias_Usuario_Criterios.pdf", size: "1.4 MB", desc: "Fichas INVEST y Definition of Done" },
+          { name: "Manual_Configuracion_Jira_Cloud.pdf", size: "4.8 MB", desc: "Guía paso a paso para tableros Scrum y Kanban" },
+          { name: "CheatSheet_Métricas_Agiles_Velocidad.pdf", size: "900 KB", desc: "Fórmulas de velocidad y predicción de entregas" }
+        ]
+      },
+      {
+        id: "e3",
+        title: "Workshop: Power BI para PMO & Dashboards",
+        badge: "Business Intelligence",
+        date: "12 Diciembre 2026 - 10:00 hrs",
+        modalidad: "Online Transmisión en Vivo",
+        image: "public/images/cards/recursos_premium.webp",
+        shortDesc: "Aprende a construir dashboards ejecutivos interactivos con métricas EVM y cronogramas en vivo.",
+        objective: "Proveer al participante los conocimientos de modelado DAX y visualización de datos en Power BI para automatizar el reporte de avance a la alta dirección.",
+        temario: [
+          { sesion: "Parte 1", title: "Conexión a Fuentes de Datos (Excel, Project, MS Planner)", duracion: "2 horas" },
+          { sesion: "Parte 2", title: "Medidas DAX para SPI, CPI, Variación de Costos y Estimaciones EAC", duracion: "2.5 horas" },
+          { sesion: "Parte 3", title: "Diseño UX/UI de Dashboards Ejecutivos y Filtros Dinámicos", duracion: "2.5 horas" },
+          { sesion: "Parte 4", title: "Publicación en Power BI Service y Configuración de Alertas", duracion: "1 hora" }
+        ],
+        expositores: [
+          {
+            name: "Ing. Andrea Salazar, PL-300",
+            cargo: "BI PMO Specialist",
+            empresa: "Microsoft Certified Power BI Data Analyst con 6 años de experiencia",
+            avatar: "👩‍💼"
+          }
+        ],
+        materiales: [
+          { name: "Guia_DAX_Calculos_EVM_PowerBI.pdf", size: "3.1 MB", desc: "Diccionario de fórmulas DAX para PMO" },
+          { name: "Plantilla_Dashboard_Ejecutivo_Proyecto.pdf", size: "5.5 MB", desc: "Guía de diseño y mockup visual de tableros" },
+          { name: "Dataset_Simulacion_Proyectos.pdf", size: "1.8 MB", desc: "Estructura de datos para replicar el taller" }
+        ]
+      }
+    ];
+
+    let currentSelectedEventId = "e1";
+
+    function renderEventsGrid() {
+      const grid = document.getElementById('eventsGrid');
+      grid.innerHTML = eventsData.map(evt => `
+        <div class="group rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.03] to-transparent overflow-hidden hover:border-electric-orange/40 hover:shadow-[0_0_40px_rgba(255,85,0,0.12)] transition-all duration-300 flex flex-col justify-between cursor-pointer" onclick="openEventModal('${evt.id}')">
+          <div>
+            <div class="relative h-48 w-full overflow-hidden">
+              <img src="${evt.image}" alt="${evt.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+              <div class="absolute inset-0 bg-gradient-to-t from-[#090D14] via-black/40 to-transparent"></div>
+              <div class="absolute top-3 left-3 bg-black/70 backdrop-blur-md px-2.5 py-0.5 rounded-full border border-white/10 text-[10px] font-bold text-electric-orange uppercase tracking-wider">
+                ${evt.badge}
+              </div>
+            </div>
+            <div class="p-6">
+              <div class="text-[11px] text-gray-400 mb-2 flex items-center gap-1.5">
+                <span>📅</span>
+                <span>${evt.date}</span>
+              </div>
+              <h3 class="text-xl font-bold text-white mb-2 group-hover:text-electric-orange transition-colors">${evt.title}</h3>
+              <p class="text-gray-400 text-xs leading-relaxed line-clamp-2">${evt.shortDesc}</p>
+            </div>
+          </div>
+          <div class="px-6 pb-6 pt-2 border-t border-white/5 flex items-center justify-between text-xs">
+            <span class="text-gray-400 group-hover:text-white transition-colors">Ver Temario &amp; Material</span>
+            <span class="text-electric-orange font-bold text-sm group-hover:translate-x-1 transition-transform">→</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function openEventModal(eventId) {
+      currentSelectedEventId = eventId;
+      const evt = eventsData.find(e => e.id === eventId);
+      if (!evt) return;
+
+      document.getElementById('eventModalTitle').textContent = evt.title;
+      document.getElementById('eventModalBadge').textContent = evt.badge;
+      document.getElementById('eventModalDate').textContent = `${evt.date} • ${evt.modalidad}`;
+      document.getElementById('eventModalObjective').textContent = evt.objective;
+
+      // Pestaña 1: Temario
+      document.getElementById('eventModalModulesList').innerHTML = evt.temario.map(m => `
+        <div class="p-3.5 rounded-xl bg-white/[0.02] border border-white/5 flex items-start gap-3">
+          <div class="px-2 py-1 rounded-lg bg-electric-orange/15 text-electric-orange font-bold text-[10px] whitespace-nowrap">
+            ${m.sesion}
+          </div>
+          <div class="flex-1">
+            <div class="text-xs font-bold text-white">${m.title}</div>
+            <div class="text-[10px] text-gray-400">Duración estimada: ${m.duracion}</div>
+          </div>
+        </div>
+      `).join('');
+
+      // Pestaña 2: Expositores
+      document.getElementById('eventModalSpeakersList').innerHTML = evt.expositores.map(exp => `
+        <div class="p-4 rounded-2xl bg-white/[0.03] border border-white/5 space-y-2">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-xl">
+              ${exp.avatar}
+            </div>
+            <div>
+              <div class="text-xs font-bold text-white">${exp.name}</div>
+              <div class="text-[10px] text-electric-orange font-semibold">${exp.cargo}</div>
+            </div>
+          </div>
+          <p class="text-[11px] text-gray-400 leading-relaxed">${exp.empresa}</p>
+        </div>
+      `).join('');
+
+      // Pestaña 3: Material
+      document.getElementById('eventModalMaterialsList').innerHTML = evt.materiales.map(mat => `
+        <div class="flex items-center justify-between p-3.5 rounded-xl bg-white/[0.02] border border-white/5 hover:border-electric-orange/30 transition-all">
+          <div class="flex items-center gap-3">
+            <span class="text-lg">📑</span>
+            <div>
+              <div class="text-xs font-bold text-white">${mat.name}</div>
+              <div class="text-[10px] text-gray-400">${mat.desc} • ${mat.size}</div>
+            </div>
+          </div>
+          <button onclick="simulatePdfDownload('${mat.name}')" class="px-3.5 py-1.5 rounded-xl bg-electric-orange/15 hover:bg-electric-orange text-electric-orange hover:text-white border border-electric-orange/30 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+            <span>Descargar</span>
+          </button>
+        </div>
+      `).join('');
+
+      switchEventTab('temario');
+      openModal('modalEventDetail');
+    }
+
+    function switchEventTab(tabName) {
+      // Botones
+      document.getElementById('tabBtnTemario').className = tabName === 'temario' 
+        ? 'tab-btn active px-4 py-2 rounded-xl text-xs font-bold border border-transparent transition-all flex items-center gap-2'
+        : 'tab-btn px-4 py-2 rounded-xl text-xs font-bold text-gray-400 hover:text-white border border-transparent transition-all flex items-center gap-2';
+      
+      document.getElementById('tabBtnExpositores').className = tabName === 'expositores' 
+        ? 'tab-btn active px-4 py-2 rounded-xl text-xs font-bold border border-transparent transition-all flex items-center gap-2'
+        : 'tab-btn px-4 py-2 rounded-xl text-xs font-bold text-gray-400 hover:text-white border border-transparent transition-all flex items-center gap-2';
+
+      document.getElementById('tabBtnMaterial').className = tabName === 'material' 
+        ? 'tab-btn active px-4 py-2 rounded-xl text-xs font-bold border border-transparent transition-all flex items-center gap-2'
+        : 'tab-btn px-4 py-2 rounded-xl text-xs font-bold text-gray-400 hover:text-white border border-transparent transition-all flex items-center gap-2';
+
+      // Contenidos
+      document.getElementById('tabContentTemario').classList.toggle('hidden', tabName !== 'temario');
+      document.getElementById('tabContentExpositores').classList.toggle('hidden', tabName !== 'expositores');
+      document.getElementById('tabContentMaterial').classList.toggle('hidden', tabName !== 'material');
+    }
+
+    /* ==========================================================================
+       5. GESTIÓN DE ACCIONES ADMINISTRATIVAS (AGREGAR PROYECTO, SUBIR PDF)
+       ========================================================================== */
+    function openAddProjectModal() {
+      if (!isMember) {
+        showToast("Acceso Restringido", "Debes activar el modo Miembro para agregar proyectos.");
+        return;
+      }
+      openModal('modalAddProject');
+    }
+
+    function handleSaveNewProject(e) {
+      e.preventDefault();
+      const title = document.getElementById('newProjTitle').value.trim();
+      const tag = document.getElementById('newProjTag').value.trim();
+      const imgs = document.getElementById('newProjImgs').value.trim();
+      const shortDesc = document.getElementById('newProjShortDesc').value.trim();
+      const causas = document.getElementById('newProjCausas').value.trim();
+      const soluciones = document.getElementById('newProjSoluciones').value.trim();
+      const pdf = document.getElementById('newProjPdf').value.trim() || 'Documento_Proyecto.pdf';
+
+      const imgArray = imgs ? imgs.split(',').map(s => s.trim()) : ["public/images/proyectos/gestion-agil.png"];
+
+      const newProj = {
+        id: "p_" + Date.now(),
+        title,
+        tag,
+        shortDesc,
+        images: imgArray,
+        currentImgIdx: 0,
+        causas,
+        soluciones,
+        anexos: [
+          { name: pdf, size: "2.1 MB", date: new Date().toLocaleDateString('es-PE'), desc: "Documento oficial cargado por Miembro Directiva" }
+        ]
+      };
+
+      projectsData.unshift(newProj);
+      renderProjectsGrid();
+      closeModal('modalAddProject');
+      document.getElementById('formAddProject').reset();
+      showToast("¡Proyecto Publicado!", `"${title}" ha sido incorporado al portafolio.`);
+    }
+
+    let uploadTargetContext = 'PMO Knowledge';
+
+    function openUploadPDFModal(target) {
+      if (!isMember) {
+        showToast("Acceso Restringido", "Solo los miembros pueden subir o actualizar archivos.");
+        return;
+      }
+      uploadTargetContext = target;
+      document.getElementById('uploadPDFTargetText').textContent = `Destino: ${target}`;
+      document.getElementById('selectedPdfFeedback').classList.add('hidden');
+      document.getElementById('realPdfFileInput').value = '';
+      openModal('modalUploadPDF');
+    }
+
+    function handleRealPdfChange(input) {
+      if (input.files && input.files[0]) {
+        const file = input.files[0];
+        document.getElementById('pdfUploadName').value = file.name;
+        const feedback = document.getElementById('selectedPdfFeedback');
+        feedback.textContent = `Archivo seleccionado: ${file.name} (${(file.size / (1024 * 1024)).toFixed(2)} MB)`;
+        feedback.classList.remove('hidden');
+      }
+    }
+
+    function handleUploadPDFSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById('pdfUploadName').value.trim();
+      const desc = document.getElementById('pdfUploadDesc').value.trim() || 'Documento adjuntado por Miembro Directiva';
+
+      if (uploadTargetContext.includes('Proyecto')) {
+        const proj = projectsData.find(p => p.id === currentSelectedProjectId);
+        if (proj) {
+          proj.anexos.push({
+            name,
+            size: "3.2 MB",
+            date: new Date().toLocaleDateString('es-PE'),
+            desc
+          });
+          openProjectModal(proj.id);
+        }
+      } else if (uploadTargetContext.includes('PMO')) {
+        const pmo = pmoKnowledgeData[currentOpenPmoKey];
+        if (pmo) {
+          pmo.pdfs.push({
+            name,
+            size: "2.5 MB",
+            type: "Aporte de Miembro"
+          });
+          openPMOModal(currentOpenPmoKey);
+        }
+      } else if (uploadTargetContext.includes('Capacitación')) {
+        const evt = eventsData.find(ev => ev.id === currentSelectedEventId);
+        if (evt) {
+          evt.materiales.push({
+            name,
+            size: "4.0 MB",
+            desc
+          });
+          openEventModal(evt.id);
+        }
+      }
+
+      closeModal('modalUploadPDF');
+      document.getElementById('formUploadPDF').reset();
+      showToast("¡PDF Cargado Exitosamente!", `"${name}" está disponible para visualización y descarga.`);
+    }
+
+    function editCurrentProject() {
+      showToast("Modo Edición", "Los bloques del proyecto están listos para modificar en modo Miembro.");
+    }
+
+    function editCurrentEvent() {
+      showToast("Modo Edición", "El temario y expositores están listos para ser editados.");
+    }
+
+    function openCreateEventModal() {
+      if (!isMember) {
+        showToast("Acceso Restringido", "Debes activar el modo Miembro para crear eventos.");
+        return;
+      }
+      showToast("Creación de Evento", "Formulario de nueva capacitación habilitado para miembros.");
+    }
+
+    function simulatePdfDownload(fileName) {
+      showToast("Descargando PDF", `Iniciando descarga de "${fileName}"...`);
+      // Generar descarga de archivo blob simulado
+      const blob = new Blob([`CIPRO - Círculo de Gestión de Proyectos\nDocumento Oficial: ${fileName}\nGenerado el: ${new Date().toLocaleString()}`], { type: 'application/pdf' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    /* ==========================================================================
+       6. SISTEMA GLOBAL DE MODALES (TRANSICIONES SUAVES & CIERRE POR ESC / BACKDROP)
+       ========================================================================== */
+    function openModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (!modal) return;
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden'; // Evita el scroll del fondo
+    }
+
+    function closeModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (!modal) return;
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    // Cerrar modal al hacer clic en el backdrop oscuro exterior
+    document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
+      backdrop.addEventListener('click', (e) => {
+        if (e.target === backdrop) {
+          closeModal(backdrop.id);
+        }
+      });
+    });
+
+    // Cerrar modal al presionar la tecla Escape (ESC)
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        document.querySelectorAll('.modal-backdrop.active').forEach(modal => {
+          closeModal(modal.id);
+        });
+      }
+    });
+
+    // Modal Postulacion y Login
+    function openPostulacionModal() {
+      openModal('modalPostulacion');
+    }
+    function openLoginModal() {
+      openModal('modalLogin');
+    }
+
+    function handleMemberLogin(e) {
+      e.preventDefault();
+      switchUserRole(true);
+      document.getElementById('formLogin').classList.add('hidden');
+      document.getElementById('memberDashboard').classList.remove('hidden');
+      document.getElementById('loginModalTitle').textContent = 'Área de Miembro CIPRO';
+    }
+
+    function handleLogout() {
+      switchUserRole(false);
+      document.getElementById('formLogin').classList.remove('hidden');
+      document.getElementById('memberDashboard').classList.add('hidden');
+      document.getElementById('loginModalTitle').textContent = 'Acceso Miembros CIPRO';
+      closeModal('modalLogin');
+    }
+
+    function handleSendPostulacion(e) {
+      e.preventDefault();
+      document.getElementById('formPostulacion').classList.add('hidden');
+      document.getElementById('postulacionSuccess').classList.remove('hidden');
+    }
+
+    function toggleMobileNav() {
+      const menu = document.getElementById('mobileNavMenu');
+      menu.classList.toggle('hidden');
+    }
+
+    // Toast flotante
+    let toastTimeout;
+    function showToast(title, msg) {
+      clearTimeout(toastTimeout);
+      const toast = document.getElementById('toastNotification');
+      document.getElementById('toastTitle').textContent = title;
+      document.getElementById('toastMsg').textContent = msg;
+      toast.classList.add('show');
+      toastTimeout = setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3500);
+    }
+
+    /* ==========================================================================
+       7. ANIMACIÓN DEL CANVAS 3D DEL HERO (141 FRAMES LOOP)
+       ========================================================================== */
+    const canvas = document.getElementById('heroCanvas');
+    const ctx = canvas.getContext('2d');
+    const totalFrames = 141;
+    const images = [];
+    let currentFrame = 0;
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    // Precargar fotogramas existentes en public/images/sequence/loop_cipro/
+    for (let i = 1; i <= totalFrames; i++) {
+      const img = new Image();
+      const pad = String(i).padStart(3, '0');
+      img.src = `public/images/sequence/loop_cipro/ezgif-frame-${pad}.jpg`;
+      images.push(img);
+    }
+
+    function renderHero() {
+      const img = images[currentFrame];
+      if (img && img.complete && img.naturalWidth > 0) {
+        ctx.fillStyle = '#020202';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const isMobile = canvas.width < 768;
+        const scale = isMobile ? 0.9 : 0.52;
+        const targetWidth = canvas.width * scale;
+        const targetHeight = targetWidth / (img.naturalWidth / img.naturalHeight || 1.77);
+
+        const x = (canvas.width - targetWidth) / 2;
+        const y = ((canvas.height - targetHeight) / 2) * 0.35;
+
+        ctx.drawImage(img, x, y, targetWidth, targetHeight);
+      }
+      currentFrame = (currentFrame + 1) % totalFrames;
+      requestAnimationFrame(() => setTimeout(renderHero, 33));
+    }
+
+    if (images[0]) {
+      images[0].onload = renderHero;
+      // Fallback si la imagen ya estaba en caché
+      if (images[0].complete) renderHero();
+    }
+
+    /* ==========================================================================
+       8. INICIALIZACIÓN GENERAL
+       ========================================================================== */
+    window.addEventListener('DOMContentLoaded', () => {
+      renderProjectsGrid();
+      renderEventsGrid();
+      updateRoleUI();
+    });
+  </script>
+</body>
+</html>
